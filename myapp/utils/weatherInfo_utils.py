@@ -5,11 +5,12 @@
 #@Software: PyCharm
 import json
 import requests
-
+from django_wx import  settings
 class Gaode_tianqi(object):
     def __init__(self,address):
         self.__address = address
-        url = f"https://restapi.amap.com/v3/geocode/geo?address={self.__address}&output=JSON&key=1f3fb86b40fc76836f12afbff186285a"
+        self.key = settings.GAODE_KEY
+        url = f"https://restapi.amap.com/v3/geocode/geo?address={self.__address}&output=JSON&key={self.key}"
         payload = {}
         headers = {}
         response = requests.request("GET", url, headers=headers, data=payload)
@@ -64,14 +65,14 @@ class Gaode_tianqi(object):
 
     def get_weatherinfo_base(self):
         import requests
-        url = f"https://restapi.amap.com/v3/weather/weatherInfo?key=1f3fb86b40fc76836f12afbff186285a&city={self.__adcode}&extensions=base&output=JSON"
+        url = f"https://restapi.amap.com/v3/weather/weatherInfo?key={self.key}&city={self.__adcode}&extensions=base&output=JSON"
         payload = {}
         headers = {}
         response = requests.request("GET", url, headers=headers, data=payload)
         return  json.loads(response.text)
     def get_weatherinfo_all(self):
         import requests
-        url = f"https://restapi.amap.com/v3/weather/weatherInfo?key=1f3fb86b40fc76836f12afbff186285a&city={self.__adcode}&extensions=all&output=JSON"
+        url = f"https://restapi.amap.com/v3/weather/weatherInfo?key={self.key}&city={self.__adcode}&extensions=all&output=JSON"
         payload = {}
         headers = {}
         response = requests.request("GET", url, headers=headers, data=payload)
