@@ -1,1 +1,24 @@
 /django_wx/asettings.py
+/wx_vue/.DS_Store
+/wx_vue/node_modules
+/wx_vue//dist
+
+
+# local env files
+/wx_vue/.env.local
+/wx_vue/.env.*.local
+
+# Log files
+/wx_vue/npm-debug.log*
+/wx_vue/yarn-debug.log*
+/wx_vue/yarn-error.log*
+/wx_vue/pnpm-debug.log*
+
+# Editor directories and files
+/wx_vue/.idea
+/wx_vue/.vscode
+/wx_vue/*.suo
+/wx_vue/*.ntvs*
+/wx_vue/*.njsproj
+/wx_vue/*.sln
+/wx_vue/*.sw?

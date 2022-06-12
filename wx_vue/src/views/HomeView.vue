@@ -62,15 +62,16 @@
 			},
 			login_check() {
 				var v_token = this.$cookies.get("login-token");
+				console.log('首页页面')
 				console.log(v_token);
-				if (v_token == null) {
+				if (v_token === null || v_token === 'null') {
 					this.$router.push("/")
 				} else {
 					console.log('登录了')
 				}
 			},
 			Search_act(event) {
-				axios.get('http://localhost:8000/api/geturl', {
+				axios.get('api/geturl', {
 					params: {
 						event: event
 					},
@@ -85,14 +86,10 @@
 				})
 			},
 			quit() {
-				this.$cookies.remove("login-token", {
-					domain: 'localhost',
-					path: '/'
-				});
-				this.$cookies.remove("username", {
-					domain: 'localhost',
-					path: '/'
-				});
+				this.$cookies.set("login-token",null,0);
+				this.$cookies.set("username",null,0);
+				this.$cookies.remove("login-token");
+				this.$cookies.remove("username");
 				this.$router.push("/")
 			},
 			show_new_link_div() {
@@ -102,7 +99,7 @@
 				document.getElementById("new_link_div").style.display = 'none';
 			},
 			geturl() {
-				axios.get('http://localhost:8000/api/geturl', {
+				axios.get('api/geturl', {
 					headers: {
 						'content-type': 'application/json',
 						"AUTHORIZATION": 'jwt ' + this.$cookies.get("login-token") //token换成从缓存获取
@@ -114,7 +111,7 @@
 				})
 			},
 			delete_link(id) {
-				axios.post('http://localhost:8000/api/delete_href/', {
+				axios.post('api/delete_href/', {
 					id: id,
 				}, {
 					headers: {
@@ -139,7 +136,7 @@
 				})
 			},
 			add_link() {
-				axios.post('http://localhost:8000/api/add_href/', {
+				axios.post('api/add_href/', {
 					new_link_name: this.new_link_name,
 					new_link_url: this.new_link_url
 				}, {

@@ -37,10 +37,12 @@ export default {
   methods: {
 	logined_check() {
 	var v_token = this.$cookies.get("login-token");
-	if (v_token!= null){
-		this.$router.push("/home")
-	}else{
+	console.log('登录页面')
+	console.log(v_token)
+	if (v_token === null || v_token === 'null'){
 		console.log('请登录')
+	}else{
+		this.$router.push("/home")
 	}
 	}
 	,
@@ -50,7 +52,7 @@ export default {
         return;
 		}
 		// 向后端发送登录参数
-		axios.post('http://localhost:8000/api/wy_login/', {
+		axios.post('api/wy_login/', {
 				username: this.username,
 				password: this.password
 		}).then(res => {
@@ -76,11 +78,12 @@ export default {
     },
     registerHandle() {
         this.$router.push("/register");
-
     }
   },
 	mounted() { //这个属性就可以，在里面声明初始化时要调用的方法即可
 			// we can implement any method here like
+		console.log('测试全局变量')
+		console.log(this.$config)
 		this.logined_check()
 		}
 }
