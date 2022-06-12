@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' #秘钥
 SEND_EMAIL = 'lxy-281356662@163.com' #邮箱
 EMAIL_PASSWORD = 'MCAQZARRZEISLEAF' #邮箱授权码
+GAODE_KEY = "xxxxxxxx"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
