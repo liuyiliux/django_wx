@@ -9,11 +9,14 @@ from rest_framework.views import APIView
 
 from myapp.models import DB_weatherinfo_base, DB_weatherinfo_all, DB_user, DB_href
 from myapp.utils.auth import JwtAuthorizationAuthentication
-from myapp.utils.auth_utils import password_encry
-from myapp.utils.jwt_auth import create_token
+from myapp.utils.auth_utils import password_encry, save_wxuser
+from myapp.utils.jwt_auth import create_token, parse_payload
 from myapp.utils.sendemail import MyEmail
 from myapp.utils.weatherInfo_utils import Gaode_tianqi
 import datetime
+
+from myapp.utils.wxutils import jscode2session
+
 
 class get_weatherinfo_base(APIView):
     authentication_classes = [JwtAuthorizationAuthentication, ]
@@ -74,7 +77,7 @@ class register(APIView):
                 payload = {'status': "299", 'error': "其他错误"}
                 return Response(payload)
         return Response(payload)
-class wy_login(APIView):
+class login(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get("username",None)
         password = request.data.get("password",None)
@@ -96,6 +99,53 @@ class wy_login(APIView):
                 print(e.__str__())
                 payload = {'status': "299", 'error': "其他错误"}
                 return Response(payload)
+# 自定义的ExpiringTokenAuthentication认证方式
+class wx_login(APIView):
+    def post(self, request, *args, **kwargs):
+        """ 用户登录 """
+        # params用于获取字符串，
+        # data：用于获取正文，
+        # post方法两个参数都可以使用，get方法只能使用params
+        code = request.data.get('code')
+        # 检测用户和密码是否正确，此处可以在数据进行校验。
+        if code:
+            # 存在code
+            wxdata = jscode2session(code)
+            if wxdata.get('status'):
+                userInfo = request.data.get('userInfo')
+                userInfo['openid'] = wxdata.get('data')['openid']
+                userInfo['unionid'] = wxdata.get('data')['unionid']
+                save_wxuser(userInfo) #保存用户
+                payload = userInfo
+                token = create_token(payload) #创建token
+                return Response({'status': "True", 'userInfo': payload}, headers={'token': token})
+            else:
+                return Response({'status': "False", 'error': wxdata.get('error')})
+        return Response({'status': "False", 'error': '不存在code'})
+class logintoken(APIView):
+    def post(self, request, *args, **kwargs):
+        """ 用户登录 """
+        # params用于获取字符串，
+        # data：用于获取正文，
+        # post方法两个参数都可以使用，get方法只能使用params
+        # request.data{'code':'0042e209909bdc1de90a985721788fba','userInfo': {'avatarUrl': 'https://thirdqq.qlogo.cn/qqapp/1111606452/8ABBB9AD27105F660A44709478527506/100','nickName': 'test'}}
+        token = request.data.get('token')
+        # 检测用户和密码是否正确，此处可以在数据进行校验。
+        if token:
+            # 存在token
+            payload = parse_payload(token)
+            # {'status': True, 'data': {'avatarUrl': 'https://thirdqq.qlogo.cn/qqapp/1111606452/8ABBB9AD27105F660A44709478527506/100','nickName': '\uf8ff', 'openid': '8ABBB9AD27105F660A44709478527506','unionid': 'UID_264350906702A439A7FAA9D573B40B1F', 'exp': 1651342555}, 'error': None}
+            if payload.get('status'):
+                userInfo = payload.get('data')
+                userInfo.pop('exp')
+                payload = userInfo
+                token = create_token(payload)
+                return Response({'status': "True", 'userInfo': payload}, headers={'token': token})
+            else:
+                return Response({'status': "False", 'error': payload.get('error')})
+        return Response({'status': "False", 'error': '不存在token'})
+
+
 class sendcode(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data['email']
@@ -114,7 +164,7 @@ class sendcode(APIView):
                 third_kinds = random.randint(0, 9)
                 code_list.append(str(third_kinds))
         emailcode = "".join(code_list)
-        print(emailcode)
+        # print(emailcode)
         myemail = MyEmail()
         myemail.sendemail(emailcode,email)
         request.session['emailcode'] = emailcode
@@ -191,7 +241,7 @@ def update_or_create_weatherinfo_all(city,tianqi):
         return {'status': False}
 
 class geturl(APIView):
-    authentication_classes = [JwtAuthorizationAuthentication, ]
+    # authentication_classes = [JwtAuthorizationAuthentication, ]
     def get(self, request, *args, **kwargs):
         index = request.GET.get("event",None)
         if index ==None or len(index)==0:

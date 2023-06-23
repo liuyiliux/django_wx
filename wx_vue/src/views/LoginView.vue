@@ -52,7 +52,7 @@ export default {
         return;
 		}
 		// 向后端发送登录参数
-		axios.post('api/wy_login/', {
+		axios.post('api/login/', {
 				username: this.username,
 				password: this.password
 		}).then(res => {

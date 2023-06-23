@@ -49,7 +49,9 @@ class DB_user(models.Model):
     sex = models.CharField('性别',max_length=1 ,null=True ,blank=True)
     qq = models.CharField('qq',max_length=15 ,null=True ,blank=True)
     weixin = models.CharField('微信号',max_length=20 ,null=True ,blank=True)
+    nick_name = models.CharField('微信名',max_length=20 ,null=True ,blank=True)
     phone = models.CharField('手机号',max_length=11 , null=True ,blank=True)
+    avatar_url = models.CharField('头像url',max_length=1000 , null=True ,blank=True)
     type = models.CharField('用户类型(0:网站，1：微信,2：qq',max_length=1 , null=True ,blank=True)
     def __str__(self):
         return str(self.username)
