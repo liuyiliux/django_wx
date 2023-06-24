@@ -65,6 +65,8 @@ class register(APIView):
             payload = {'status': "205", 'error': "邮箱已存在"}
             return Response(payload)
         if emailcode != request.session.get('emailcode', None) or  email != request.session.get('email', None):
+            print( request.session.get('emailcode', None))
+            print( request.session.get('email', None))
             payload={'status': "203", 'error': "验证码不正确"}
             return Response(payload)
         else:
@@ -164,7 +166,7 @@ class sendcode(APIView):
                 third_kinds = random.randint(0, 9)
                 code_list.append(str(third_kinds))
         emailcode = "".join(code_list)
-        # print(emailcode)
+        print(emailcode)
         myemail = MyEmail()
         myemail.sendemail(emailcode,email)
         request.session['emailcode'] = emailcode

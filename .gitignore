@@ -1,4 +1,7 @@
 /django_wx/localsettings.py
+/myapp/migrations
+/.idea
+/db.sqlite3
 /wx_vue/.DS_Store
 /wx_vue/node_modules
 /wx_vue//dist
